@@ -11,12 +11,12 @@ import (
 )
 
 type UserHandler struct {
-	userusecase usecase.UserUsecase
+	usecase usecase.UserUsecase
 }
 
 func NewUserHandler(userusecase usecase.UserUsecase) *UserHandler {
 	return &UserHandler{
-		userusecase: userusecase,
+		usecase: userusecase,
 	}
 }
 
@@ -29,7 +29,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	res, err := h.userusecase.Login(strings.ToLower(input.Email), strings.ToLower(input.Password))
+	res, err := h.usecase.Login(strings.ToLower(input.Email), strings.ToLower(input.Password))
 
 	if err != nil {
 		utils.WriteResponse(c, http.StatusInternalServerError, err.Error(), nil)
@@ -52,7 +52,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 		Password: input.Password,
 	}
 
-	res, err := h.userusecase.Register(newUser)
+	res, err := h.usecase.Register(newUser)
 	if err != nil {
 		utils.WriteResponse(c, http.StatusInternalServerError, err.Error(), nil)
 		return

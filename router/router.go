@@ -15,6 +15,10 @@ func Router() {
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userHandler := handler.NewUserHandler(userUsecase)
 
+	transRepository := repository.NewTransactionRepository(db)
+	transUsecase := usecase.NewTransactionUsecase(transRepository, userRepository)
+	transHandler := handler.NewTransactionHandler(transUsecase)
+
 	r := gin.Default()
 	authRoute := r.Group("/")
 	{
@@ -22,5 +26,9 @@ func Router() {
 		authRoute.POST("/register", userHandler.Register)
 	}
 
+	transRoute := r.Group("/transaction")
+	{
+		transRoute.POST("/topup", transHandler.TopUpAmount)
+	}
 	r.Run(":8080")
 }

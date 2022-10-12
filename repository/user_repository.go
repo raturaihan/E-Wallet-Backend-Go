@@ -1,19 +1,20 @@
 package repository
 
 import (
+	"assignment-golang-backend/customerrors.go"
 	"assignment-golang-backend/entity"
 	"fmt"
 
 	"gorm.io/gorm"
 )
 
-const WalletID = 100000
-
 type UserRepository interface {
 	CreateUser(e *entity.User) (*entity.User, int, error)
 	GetUser(name string) ([]*entity.User, int, error)
 	GetUserByEmail(email string) (*entity.User, int, error)
 	IsUserExist(email string) (bool, error)
+	UpdateBalanceByWalletID(id, amount int) (*entity.User, error)
+	GetUserByID(walletID int) (*entity.User, int, error)
 }
 
 type userRepository struct {
@@ -55,4 +56,27 @@ func (r *userRepository) IsUserExist(email string) (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+func (r *userRepository) UpdateBalanceByWalletID(id, amount int) (*entity.User, error) {
+	var user entity.User
+	r.db.First(&user, id)
+
+	result := r.db.Model(&user).Update("balance", user.Balance+amount)
+
+	if result.RowsAffected == 0 {
+		return nil, &customerrors.NoDataUpdatedError{}
+	}
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) GetUserByID(walletID int) (*entity.User, int, error) {
+	var user *entity.User
+	result := r.db.Where("wallet_id = ?", walletID).Find(&user)
+	return user, int(result.RowsAffected), result.Error
 }
