@@ -11,6 +11,7 @@ type User struct {
 	Name      string `json:"name"`
 	Balance   int    `json:"balance"`
 	CreatedAt time.Time
+	//Transaction []Transaction `gorm:"foreignKey:WalletID;references:WalletID"`
 }
 
 type UserLogin struct {
@@ -22,4 +23,11 @@ type UserRegister struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type UserDetails struct {
+	WalletID int    `json:"wallet_id"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Balance  int    `json:"balance"`
 }

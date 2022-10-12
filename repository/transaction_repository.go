@@ -9,7 +9,7 @@ import (
 )
 
 type TransactionRepository interface {
-	GetAllTransaction(params map[string]string) ([]*entity.Transaction, error)
+	GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error)
 	DoTransaction(e *entity.Transaction) error
 }
 
@@ -23,15 +23,18 @@ func NewTransactionRepository(db *gorm.DB) TransactionRepository {
 	}
 }
 
-func (r *transactionRepository) GetAllTransaction(params map[string]string) ([]*entity.Transaction, error) {
+func (r *transactionRepository) GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error) {
 	transactions := make([]*entity.Transaction, 0)
 
 	query := []string{}
 	values := []interface{}{}
 
-	if val, ok := params["transtype"]; ok {
+	query = append(query, "wallet_id = ?")
+	values = append(values, walletid)
+
+	if val, ok := params["trans_type"]; ok {
 		val = "%" + val + "%"
-		query = append(query, "transtype ILIKE ?")
+		query = append(query, "trans_type = ?")
 		values = append(values, val)
 	}
 

@@ -9,6 +9,7 @@ import (
 type TransactionUsecase interface {
 	TopUpAmount(e *entity.Transaction) (*entity.Transaction, error)
 	Transfer(e *entity.Transaction) (*entity.Transaction, error)
+	GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error)
 }
 
 type transactionUsecase struct {
@@ -99,6 +100,14 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 	}
 
 	return transaction, nil
+}
+
+func (u *transactionUsecase) GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error) {
+	tl, err := u.transactionRepo.GetAllTransactionById(walletid, params)
+	if err != nil {
+		return nil, err
+	}
+	return tl, nil
 }
 
 func (u *transactionUsecase) GenerateDescription(fundId int) string {

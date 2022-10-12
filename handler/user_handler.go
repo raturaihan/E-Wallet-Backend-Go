@@ -60,3 +60,21 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	utils.WriteResponse(c, http.StatusOK, http.StatusText(http.StatusOK), res)
 }
+
+func (h *UserHandler) GetUserDetails(c *gin.Context) {
+	walletId := c.MustGet("wallet_id")
+	walletIdInt := walletId.(int)
+
+	res, err := h.usecase.GetUserDetails(walletIdInt)
+	if err != nil {
+		utils.WriteResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+	userDetails := &entity.UserDetails{
+		WalletID: res.WalletID,
+		Email:    res.Email,
+		Name:     res.Name,
+		Balance:  res.Balance,
+	}
+
+	utils.WriteResponse(c, http.StatusOK, http.StatusText(http.StatusOK), userDetails)
+}

@@ -70,3 +70,17 @@ func (h *TransactionHandler) Transfer(c *gin.Context) {
 
 	utils.WriteResponse(c, http.StatusOK, http.StatusText(http.StatusOK), res)
 }
+
+func (h *TransactionHandler) GetAllTransaction(c *gin.Context) {
+	params := make(map[string]string)
+	walletId := c.MustGet("wallet_id")
+	walletIdInt := walletId.(int)
+
+	tl, err := h.usecase.GetAllTransactionById(walletIdInt, params)
+
+	if err != nil {
+		utils.WriteErrorResponse(c, http.StatusInternalServerError, err.Error(), nil)
+	}
+
+	utils.WriteErrorResponse(c, http.StatusOK, http.StatusText(http.StatusOK), tl)
+}

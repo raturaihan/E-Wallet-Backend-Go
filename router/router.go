@@ -27,9 +27,11 @@ func Router() {
 		authRoute.POST("/register", userHandler.Register)
 	}
 
-	transRoute := r.Group("/transaction")
+	transRoute := r.Group("/user")
 	transRoute.Use(middleware.CheckAuth())
 	{
+		transRoute.GET("", userHandler.GetUserDetails)
+		transRoute.GET("/transaction", transHandler.GetAllTransaction)
 		transRoute.POST("/topup", transHandler.TopUpAmount)
 		transRoute.POST("/transfer", transHandler.Transfer)
 	}
