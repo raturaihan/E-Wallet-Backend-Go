@@ -41,3 +41,27 @@ func (h *TransactionHandler) TopUpAmount(c *gin.Context) {
 
 	utils.WriteResponse(c, http.StatusOK, http.StatusText(http.StatusOK), res)
 }
+
+func (h *TransactionHandler) Transfer(c *gin.Context) {
+	var input entity.TransferInput
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		utils.WriteResponse(c, http.StatusBadRequest, err.Error(), nil)
+	}
+
+	newTransaction := &entity.Transaction{
+		WalletID:    input.WalletID,
+		TargetID:    input.TargetID,
+		Amount:      input.Amount,
+		Description: input.Description,
+	}
+
+	res, err := h.usecase.Transfer(newTransaction)
+
+	if err != nil {
+		utils.WriteResponse(c, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+
+	utils.WriteResponse(c, http.StatusOK, http.StatusText(http.StatusOK), res)
+}

@@ -8,6 +8,7 @@ import (
 
 type TransactionUsecase interface {
 	TopUpAmount(e *entity.Transaction) (*entity.Transaction, error)
+	Transfer(e *entity.Transaction) (*entity.Transaction, error)
 }
 
 type transactionUsecase struct {
@@ -48,6 +49,53 @@ func (u *transactionUsecase) TopUpAmount(e *entity.Transaction) (*entity.Transac
 	_, err = u.userRepo.UpdateBalanceByWalletID(e.WalletID, e.Amount)
 	if err != nil {
 		return nil, err
+	}
+
+	return transaction, nil
+}
+
+func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transaction, error) {
+	source, sourceRow, sourceErr := u.userRepo.GetUserByID(e.WalletID)
+	if sourceRow == 0 {
+		return nil, &customerrors.NoDataFoundError{}
+	}
+	if sourceErr != nil {
+		return nil, sourceErr
+	}
+
+	target, targetRow, targetErr := u.userRepo.GetUserByID(e.TargetID)
+	if targetRow == 0 {
+		return nil, &customerrors.TargetNotFoundError{}
+	}
+	if targetErr != nil {
+		return nil, targetErr
+	}
+
+	if source.Balance < e.Amount {
+		return nil, &customerrors.InsufficientBalanceError{}
+	}
+
+	transaction := &entity.Transaction{
+		WalletID:    source.WalletID,
+		TransType:   "TRANSFER",
+		TargetID:    e.TargetID,
+		Amount:      e.Amount,
+		Description: e.Description,
+	}
+
+	res := u.transactionRepo.DoTransaction(transaction)
+	if res != nil {
+		return nil, res
+	}
+
+	_, errSource := u.userRepo.UpdateBalanceByWalletID(source.WalletID, -e.Amount)
+	if errSource != nil {
+		return nil, errSource
+	}
+
+	_, errTarget := u.userRepo.UpdateBalanceByWalletID(target.WalletID, e.Amount)
+	if errTarget != nil {
+		return nil, errTarget
 	}
 
 	return transaction, nil

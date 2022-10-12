@@ -29,6 +29,7 @@ func Router() {
 	transRoute := r.Group("/transaction")
 	{
 		transRoute.POST("/topup", transHandler.TopUpAmount)
+		transRoute.POST("/transfer", transHandler.Transfer)
 	}
 	r.Run(":8080")
 }
