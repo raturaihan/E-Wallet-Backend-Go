@@ -3,6 +3,7 @@ package router
 import (
 	"assignment-golang-backend/database"
 	"assignment-golang-backend/handler"
+	"assignment-golang-backend/middleware"
 	"assignment-golang-backend/repository"
 	"assignment-golang-backend/usecase"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func Router() {
+	r := gin.Default()
 	db := database.NewDB()
 	userRepository := repository.NewUserRepository(db)
 	userUsecase := usecase.NewUserUsecase(userRepository)
@@ -19,7 +21,6 @@ func Router() {
 	transUsecase := usecase.NewTransactionUsecase(transRepository, userRepository)
 	transHandler := handler.NewTransactionHandler(transUsecase)
 
-	r := gin.Default()
 	authRoute := r.Group("/")
 	{
 		authRoute.POST("/login", userHandler.Login)
@@ -27,9 +28,12 @@ func Router() {
 	}
 
 	transRoute := r.Group("/transaction")
+	transRoute.Use(middleware.CheckAuth())
 	{
 		transRoute.POST("/topup", transHandler.TopUpAmount)
 		transRoute.POST("/transfer", transHandler.Transfer)
 	}
-	r.Run(":8080")
+
+	r.Run(":8081")
+
 }

@@ -2,46 +2,58 @@ package middleware
 
 import (
 	"assignment-golang-backend/utils"
+	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthorizeJWT(c *gin.Context) {
-	authorizationHeader := c.GetHeader("Authorization")
-	tokenStr, err := utils.ParseAuthorizationHeader(authorizationHeader)
-	if err != nil {
-		utils.WriteErrorResponse(
-			c,
-			http.StatusUnauthorized,
-			err.Error(),
-			nil,
-		)
-		return
-	}
+//JWT Section
+func CheckAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		now := time.Now()
 
-	token, err := utils.CheckToken(tokenStr)
-	if err != nil || !token.Valid {
-		utils.WriteErrorResponse(
-			c,
-			http.StatusUnauthorized,
-			http.StatusText(http.StatusUnauthorized),
-			nil,
-		)
-		return
-	}
+		authCheck := c.Request.Header["Authorization"]
+		if len(authCheck) < 1 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": "Request failed. Authorization not found.",
+			})
+			c.Abort()
+			return
+		}
 
-	if claims, ok := token.Claims.(*utils.CustomClaim); ok {
-		c.Set("user", claims.User)
+		//Bearer Token
+		authString := authCheck[0]
+		tokenCheck := strings.Split(authString, " ")
+		if len(tokenCheck) <= 1 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": "Request failed. Token not found.",
+			})
+			c.Abort()
+			return
+		}
+
+		token := tokenCheck[1]
+
+		email, wallet_id, err := utils.CheckToken(token)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": "Request failed. Invalid token.",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Set("email", email)
+		c.Set("wallet_id", wallet_id)
 
 		c.Next()
-	} else {
-		utils.WriteErrorResponse(
-			c,
-			http.StatusUnauthorized,
-			http.StatusText(http.StatusUnauthorized),
-			nil,
-		)
-		return
+
+		log.Println(time.Since(now))
 	}
 }

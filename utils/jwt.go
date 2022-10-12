@@ -1,9 +1,6 @@
 package utils
 
 import (
-	"assignment-golang-backend/customerrors.go"
-	"assignment-golang-backend/entity"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -15,16 +12,18 @@ const (
 )
 
 type CustomClaim struct {
-	User *entity.UserToken `json:"user"`
+	Email    string `json:"email"`
+	WalletID int    `json:"wallet_id"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(user *entity.UserToken) (string, error) {
+func GenerateJWT(email string, wallet_id int) (string, error) {
 	now := time.Now()
 
-	claims := &CustomClaim{
-		User: user,
-		RegisteredClaims: jwt.RegisteredClaims{
+	claims := CustomClaim{
+		email,
+		wallet_id,
+		jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(jwtDuration)),
 		},
@@ -39,22 +38,14 @@ func GenerateJWT(user *entity.UserToken) (string, error) {
 	return ss, nil
 }
 
-func CheckToken(input string) (*jwt.Token, error) {
-	return jwt.ParseWithClaims(input, &CustomClaim{}, func(input *jwt.Token) (interface{}, error) {
-		if _, ok := input.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, &customerrors.InvalidTokenError{}
-		}
-
+func CheckToken(input string) (string, int, error) {
+	token, err := jwt.ParseWithClaims(input, &CustomClaim{}, func(tkn *jwt.Token) (any, error) {
 		return []byte(secret), nil
 	})
 
-}
-
-func ParseAuthorizationHeader(authHeader string) (string, error) {
-	authHeaderSplit := strings.Split(authHeader, "Bearer ")
-	if len(authHeaderSplit) != 2 {
-		return "", &customerrors.AuthHeaderUnavailable{}
+	if claims, ok := token.Claims.(*CustomClaim); ok && token.Valid {
+		return claims.Email, claims.WalletID, nil
+	} else {
+		return "", 0, err
 	}
-
-	return strings.TrimSpace(authHeaderSplit[1]), nil
 }

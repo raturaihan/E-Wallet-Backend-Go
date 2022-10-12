@@ -10,7 +10,7 @@ import (
 
 type UserRepository interface {
 	CreateUser(e *entity.User) (*entity.User, int, error)
-	GetUser(name string) ([]*entity.User, int, error)
+	GetUserDetails(walletid int) (*entity.User, error)
 	GetUserByEmail(email string) (*entity.User, int, error)
 	IsUserExist(email string) (bool, error)
 	UpdateBalanceByWalletID(id, amount int) (*entity.User, error)
@@ -32,10 +32,10 @@ func (r *userRepository) CreateUser(e *entity.User) (*entity.User, int, error) {
 	return e, int(result.RowsAffected), result.Error
 }
 
-func (r *userRepository) GetUser(name string) ([]*entity.User, int, error) {
-	var users []*entity.User
-	result := r.db.Where("name = ?", name).Find(&users)
-	return users, int(result.RowsAffected), result.Error
+func (r *userRepository) GetUserDetails(walletid int) (*entity.User, error) {
+	var user *entity.User
+	result := r.db.Where("wallet_id = ?", walletid).Find(&user)
+	return user, result.Error
 }
 
 func (r *userRepository) GetUserByEmail(email string) (*entity.User, int, error) {

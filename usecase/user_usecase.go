@@ -10,6 +10,7 @@ import (
 type UserUsecase interface {
 	Login(email, password string) (*entity.Token, error)
 	Register(e *entity.User) (*entity.Token, error)
+	GetUserDetails(walletid int) (*entity.User, error)
 }
 
 type userUsecase struct {
@@ -38,13 +39,7 @@ func (u *userUsecase) Login(email, password string) (*entity.Token, error) {
 		return nil, err
 	}
 
-	userToken := &entity.UserToken{
-		ID:    user.WalletID,
-		Name:  user.Name,
-		Email: user.Email,
-	}
-
-	token, err := utils.GenerateJWT(userToken)
+	token, err := utils.GenerateJWT(user.Email, user.WalletID)
 	if err != nil {
 		return nil, err
 	}
@@ -86,16 +81,15 @@ func (u *userUsecase) Register(e *entity.User) (*entity.Token, error) {
 		return nil, err
 	}
 
-	userToken := &entity.UserToken{
-		ID:    newUser.WalletID,
-		Name:  newUser.Name,
-		Email: newUser.Email,
-	}
-
-	token, err := utils.GenerateJWT(userToken)
+	token, err := utils.GenerateJWT(newUser.Email, newUser.WalletID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &entity.Token{TokenID: token}, nil
+}
+
+func (u *userUsecase) GetUserDetails(walletid int) (*entity.User, error) {
+	user, err := u.userRepository.GetUserDetails(walletid)
+	return user, err
 }

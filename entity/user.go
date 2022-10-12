@@ -13,12 +13,6 @@ type User struct {
 	CreatedAt time.Time
 }
 
-type UserToken struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
 type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
