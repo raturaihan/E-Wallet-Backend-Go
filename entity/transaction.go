@@ -10,7 +10,7 @@ type Transaction struct {
 	TargetID      int    `json:"target_id"`
 	FundID        int    `json:"fund_id"`
 	Description   string
-	CreatedAt     time.Time
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 type TopUpInput struct {

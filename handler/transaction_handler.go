@@ -76,6 +76,26 @@ func (h *TransactionHandler) GetAllTransaction(c *gin.Context) {
 	walletId := c.MustGet("wallet_id")
 	walletIdInt := walletId.(int)
 
+	if c.Query("limit") != "" {
+		params["limit"] = c.Query("limit")
+	}
+
+	if c.Query("page") != "" {
+		params["page"] = c.Query("page")
+	}
+
+	if c.Query("trans_type") != "" {
+		params["trans_type"] = c.Query("trans_type")
+	}
+
+	if c.Query("description") != "" {
+		params["description"] = c.Query("description")
+	}
+
+	if c.Query("sortBy") != "" {
+		params["sortBy"] = c.Query("sortBy")
+	}
+
 	tl, err := h.usecase.GetAllTransactionById(walletIdInt, params)
 
 	if err != nil {

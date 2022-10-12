@@ -33,23 +33,35 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 	values = append(values, walletid)
 
 	if val, ok := params["trans_type"]; ok {
-		val = "%" + val + "%"
-		query = append(query, "trans_type = ?")
+		val = "%%" + val + "%%"
+		query = append(query, "trans_type ILIKE ?")
+		values = append(values, val)
+	}
+	if val, ok := params["description"]; ok {
+		val = "%%" + val + "%%"
+		query = append(query, "description ILIKE ?")
 		values = append(values, val)
 	}
 
-	temp := r.db.Where(strings.Join(query, " AND"), values...)
+	temp := r.db.Where(strings.Join(query, " AND "), values...)
 
 	if val, ok := params["limit"]; ok {
 		id, _ := strconv.Atoi(val)
-		temp.Limit(id)
+		temp.Limit(id).Order("created_at DESC").Find(&transactions)
+		return transactions, nil
 	}
 	if val, ok := params["page"]; ok {
 		id, _ := strconv.Atoi(val)
-		temp.Offset(id)
+		temp.Offset(id).Find(&transactions)
+		return transactions, nil
 	}
 
-	temp.Find(&transactions)
+	if val, ok := params["sortBy"]; ok {
+		temp.Order(val).Find(&transactions)
+		return transactions, nil
+	}
+
+	temp.Limit(10).Order("created_at DESC").Find(&transactions)
 	return transactions, nil
 }
 
