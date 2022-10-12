@@ -60,11 +60,11 @@ func (u *userUsecase) Register(e *entity.User) (*entity.Token, error) {
 		return nil, &customerrors.InputEmptyError{}
 	}
 
-	isExist, err := u.userRepository.IsUserExist(e.Email)
+	_, rowsAffected, err := u.userRepository.GetUserByEmail(e.Email)
 	if err != nil {
 		return nil, err
 	}
-	if isExist {
+	if rowsAffected == 1 {
 		return nil, &customerrors.DataAlreadyExistError{}
 	}
 
