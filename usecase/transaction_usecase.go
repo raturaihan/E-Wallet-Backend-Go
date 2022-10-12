@@ -111,14 +111,9 @@ func (u *transactionUsecase) GetAllTransactionById(walletid int, params map[stri
 }
 
 func (u *transactionUsecase) GenerateDescription(fundId int) string {
-	if fundId == 1 {
-		return "Top up from bank transfer"
+	source, err := u.transactionRepo.GetFundNameById(fundId)
+	if err != nil {
+		return ""
 	}
-	if fundId == 2 {
-		return "Top up from credit card"
-	}
-	if fundId == 3 {
-		return "Top up from cash"
-	}
-	return ""
+	return "Top up from " + source.FundName
 }

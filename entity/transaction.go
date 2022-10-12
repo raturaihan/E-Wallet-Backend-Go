@@ -13,6 +13,11 @@ type Transaction struct {
 	CreatedAt     time.Time `json:"created_at"`
 }
 
+type Fund struct {
+	FundID   int    `gorm:"primaryKey;column:fund_id" json:"fund_id"`
+	FundName string `json:"fund_name"`
+}
+
 type TopUpInput struct {
 	WalletID int `json:"wallet_id"`
 	Amount   int `json:"amount"`

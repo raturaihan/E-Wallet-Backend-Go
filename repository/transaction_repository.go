@@ -11,6 +11,7 @@ import (
 type TransactionRepository interface {
 	GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error)
 	DoTransaction(e *entity.Transaction) error
+	GetFundNameById(id int) (*entity.Fund, error)
 }
 
 type transactionRepository struct {
@@ -71,4 +72,11 @@ func (r *transactionRepository) DoTransaction(e *entity.Transaction) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *transactionRepository) GetFundNameById(id int) (*entity.Fund, error) {
+	var fund *entity.Fund
+	result := r.db.Where("fund_id = ?", id).Find(&fund)
+
+	return fund, result.Error
 }
