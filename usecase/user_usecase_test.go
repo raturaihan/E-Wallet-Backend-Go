@@ -50,12 +50,15 @@ func TestLoginUser_NoError(t *testing.T) {
 	user := mocks.NewUserRepository(t)
 	s := NewUserUsecase(user)
 
-	entityToken := entity.Token{
-		TokenID: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3Q4QHNob3BlZS5jb20iLCJ3YWxsZXRfaWQiOjEwMDAwNywiZXhwIjoxNjY1NjM1OTAwLCJpYXQiOjE2NjU2MzIzMDB9.ujBs3esW74aRSKhfy6jQZV_B5Bbx6flZFzgfigjpGtc",
+	entityUser := entity.User{
+		WalletID: 100001,
+		Password: "$2a$10$SWvAZsaXq4bAlqQCeF6JjeBZqc6vU7OUS29ELmlbIIV07tfQjlkLq",
+		Name:     "test2",
+		Email:    "test2@shopee.com",
 	}
 
-	user.On("Login", "test2@shopee.com", "1234").
-		Return(&entityToken, nil)
+	user.On("GetUserByEmail", "test2@shopee.com").
+		Return(&entityUser, 1, nil)
 
 	e, err := s.Login("test2@shopee.com", "1234")
 	if err != nil {
@@ -63,5 +66,45 @@ func TestLoginUser_NoError(t *testing.T) {
 	}
 	if e == nil {
 		t.Errorf("expected token, got none")
+	}
+}
+
+func TestLoginUser_ErrorIDNotFound(t *testing.T) {
+	user := mocks.NewUserRepository(t)
+	s := NewUserUsecase(user)
+
+	user.On("GetUserByEmail", "test2@shopee.com").
+		Return(nil, 0, errors.New("id not found"))
+
+	e, err := s.Login("test2@shopee.com", "1234")
+	if err == nil {
+		t.Errorf("expected error, got none")
+	}
+	if e != nil {
+		t.Errorf("expected no token, got one")
+	}
+}
+
+func TestLoginUser_ErrorWrongPassword(t *testing.T) {
+	user := mocks.NewUserRepository(t)
+	s := NewUserUsecase(user)
+
+	entityUser := entity.User{
+		WalletID: 100001,
+		Email:    "test2@shopee.com",
+		Name:     "test2",
+		Balance:  50000,
+		Password: "12345",
+	}
+
+	user.On("GetUserByEmail", "test2@shopee.com").
+		Return(&entityUser, 1, nil)
+
+	e, err := s.Login("test2@shopee.com", "1234")
+	if err == nil {
+		t.Errorf("expected error, got none")
+	}
+	if e != nil {
+		t.Errorf("expected no token, got one")
 	}
 }

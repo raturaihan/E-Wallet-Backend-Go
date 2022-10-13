@@ -10,6 +10,7 @@ type TransactionUsecase interface {
 	TopUpAmount(e *entity.Transaction) (*entity.Transaction, error)
 	Transfer(e *entity.Transaction) (*entity.Transaction, error)
 	GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error)
+	GenerateDescription(fundId int) string
 }
 
 type transactionUsecase struct {
