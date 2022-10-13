@@ -48,7 +48,7 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 
 	if val, ok := params["limit"]; ok {
 		id, _ := strconv.Atoi(val)
-		temp.Limit(id).Order("created_at DESC").Find(&transactions)
+		temp.Limit(id).Find(&transactions)
 		return transactions, nil
 	}
 	if val, ok := params["page"]; ok {

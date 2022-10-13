@@ -36,6 +36,7 @@ func (u *transactionUsecase) TopUpAmount(e *entity.Transaction) (*entity.Transac
 
 	transaction := &entity.Transaction{
 		WalletID:    wallet.WalletID,
+		SourceID:    wallet.WalletID,
 		TransType:   "TOPUP",
 		Amount:      e.Amount,
 		FundID:      e.FundID,
@@ -76,7 +77,7 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 		return nil, &customerrors.InsufficientBalanceError{}
 	}
 
-	transaction := &entity.Transaction{
+	transaction1 := &entity.Transaction{
 		WalletID:    source.WalletID,
 		TransType:   "TRANSFER",
 		TargetID:    e.TargetID,
@@ -84,9 +85,22 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 		Description: e.Description,
 	}
 
-	res := u.transactionRepo.DoTransaction(transaction)
-	if res != nil {
-		return nil, res
+	transaction2 := &entity.Transaction{
+		WalletID:    e.TargetID,
+		TransType:   "RECEIVED TRANSFER",
+		SourceID:    source.WalletID,
+		Amount:      e.Amount,
+		Description: e.Description,
+	}
+
+	res1 := u.transactionRepo.DoTransaction(transaction1)
+	if res1 != nil {
+		return nil, res1
+	}
+
+	res2 := u.transactionRepo.DoTransaction(transaction2)
+	if res2 != nil {
+		return nil, res2
 	}
 
 	_, errSource := u.userRepo.UpdateBalanceByWalletID(source.WalletID, -e.Amount)
@@ -99,7 +113,7 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 		return nil, errTarget
 	}
 
-	return transaction, nil
+	return transaction1, nil
 }
 
 func (u *transactionUsecase) GetAllTransactionById(walletid int, params map[string]string) ([]*entity.Transaction, error) {

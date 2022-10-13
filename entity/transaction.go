@@ -7,6 +7,7 @@ type Transaction struct {
 	WalletID      int    `json:"wallet_id"`
 	TransType     string `json:"trans_type"`
 	Amount        int    `json:"amount"`
+	SourceID      int    `json:"source_id"`
 	TargetID      int    `json:"target_id"`
 	FundID        int    `json:"fund_id"`
 	Description   string
