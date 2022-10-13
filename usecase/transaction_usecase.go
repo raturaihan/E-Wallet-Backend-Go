@@ -35,6 +35,10 @@ func (u *transactionUsecase) TopUpAmount(e *entity.Transaction) (*entity.Transac
 		return nil, err
 	}
 
+	if e.Amount < 50000 || e.Amount > 10000000 {
+		return nil, &customerrors.ErrorTopUp{}
+	}
+
 	transaction := &entity.Transaction{
 		WalletID:    wallet.WalletID,
 		SourceID:    wallet.WalletID,
@@ -77,6 +81,11 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 	if e.TargetID == e.WalletID {
 		return nil, &customerrors.TransferFailed{}
 	}
+
+	if e.Amount < 1000 || e.Amount > 50000000 {
+		return nil, &customerrors.ErrorTransferAmount{}
+	}
+
 	if source.Balance < e.Amount {
 		return nil, &customerrors.InsufficientBalanceError{}
 	}
