@@ -29,6 +29,9 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 
 	query := []string{}
 	values := []interface{}{}
+	sort := "DESC"
+	order := "created_at"
+	limit := 10
 
 	query = append(query, "wallet_id = ?")
 	values = append(values, walletid)
@@ -47,22 +50,21 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 	temp := r.db.Where(strings.Join(query, " AND "), values...)
 
 	if val, ok := params["limit"]; ok {
-		id, _ := strconv.Atoi(val)
-		temp.Limit(id).Find(&transactions)
-		return transactions, nil
+		limit, _ = strconv.Atoi(val)
 	}
 	if val, ok := params["page"]; ok {
 		id, _ := strconv.Atoi(val)
-		temp.Offset(id).Find(&transactions)
-		return transactions, nil
+		temp.Offset(id)
 	}
 
 	if val, ok := params["sortBy"]; ok {
-		temp.Order(val).Find(&transactions)
-		return transactions, nil
+		order = val
+	}
+	if val, ok := params["sort"]; ok {
+		sort = val
 	}
 
-	temp.Limit(10).Order("created_at DESC").Find(&transactions)
+	temp.Limit(limit).Order(order + " " + sort).Find(&transactions)
 	return transactions, nil
 }
 

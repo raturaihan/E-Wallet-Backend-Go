@@ -96,6 +96,10 @@ func (h *TransactionHandler) GetAllTransaction(c *gin.Context) {
 		params["sortBy"] = c.Query("sortBy")
 	}
 
+	if c.Query("sort") != "" {
+		params["sort"] = c.Query("sort")
+	}
+
 	tl, err := h.usecase.GetAllTransactionById(walletIdInt, params)
 
 	if err != nil {
