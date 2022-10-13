@@ -6,6 +6,13 @@ import (
 	"assignment-golang-backend/repository"
 )
 
+const (
+	MinTopup    = 50000
+	MaxTopup    = 10000000
+	MinTransfer = 1000
+	MaxTransfer = 50000000
+)
+
 type TransactionUsecase interface {
 	TopUpAmount(e *entity.Transaction) (*entity.Transaction, error)
 	Transfer(e *entity.Transaction) (*entity.Transaction, error)
@@ -35,7 +42,7 @@ func (u *transactionUsecase) TopUpAmount(e *entity.Transaction) (*entity.Transac
 		return nil, err
 	}
 
-	if e.Amount < 50000 || e.Amount > 10000000 {
+	if e.Amount < MinTopup || e.Amount > MaxTopup {
 		return nil, &customerrors.ErrorTopUp{}
 	}
 
@@ -82,7 +89,7 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 		return nil, &customerrors.TransferFailed{}
 	}
 
-	if e.Amount < 1000 || e.Amount > 50000000 {
+	if e.Amount < MinTransfer || e.Amount > MaxTransfer {
 		return nil, &customerrors.ErrorTransferAmount{}
 	}
 
