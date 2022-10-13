@@ -54,7 +54,7 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 	}
 	if val, ok := params["page"]; ok {
 		id, _ := strconv.Atoi(val)
-		temp.Offset(id)
+		temp.Offset((id - 1) * limit)
 	}
 
 	if val, ok := params["sortBy"]; ok {
@@ -64,7 +64,7 @@ func (r *transactionRepository) GetAllTransactionById(walletid int, params map[s
 		sort = val
 	}
 
-	temp.Limit(limit).Order(order + " " + sort).Find(&transactions)
+	temp.Preload("Fund").Limit(limit).Order(order + " " + sort).Find(&transactions)
 	return transactions, nil
 }
 

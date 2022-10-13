@@ -12,6 +12,7 @@ type Transaction struct {
 	FundID        int    `json:"fund_id"`
 	Description   string
 	CreatedAt     time.Time `json:"created_at"`
+	Fund          Fund      `gorm:"foreignKey:FundID;references:FundID"`
 }
 
 type Fund struct {

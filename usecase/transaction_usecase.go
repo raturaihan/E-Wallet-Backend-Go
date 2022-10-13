@@ -73,6 +73,9 @@ func (u *transactionUsecase) Transfer(e *entity.Transaction) (*entity.Transactio
 		return nil, targetErr
 	}
 
+	if e.TargetID == e.WalletID {
+		return nil, &customerrors.TransferFailed{}
+	}
 	if source.Balance < e.Amount {
 		return nil, &customerrors.InsufficientBalanceError{}
 	}

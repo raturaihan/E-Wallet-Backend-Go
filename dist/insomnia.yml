@@ -1,0 +1,308 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [],
+  "paths": {
+    "/user/transaction": {
+      "get": {
+        "description": "GetTransaction",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "trans_type",
+            "in": "path",
+            "schema": {}
+          },
+          {
+            "name": "sortBy",
+            "in": "path",
+            "schema": {}
+          },
+          {
+            "name": "sort",
+            "in": "path",
+            "schema": {}
+          },
+          {
+            "name": "limit",
+            "in": "path",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GetTransaction 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "GetTransaction 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "GetTransaction 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user": {
+      "get": {
+        "description": "GetUserDetails",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "GetUserDetails 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "GetUserDetails 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "GetUserDetails 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/transfer": {
+      "post": {
+        "description": "Transfer",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target_id": {
+                    "type": "number",
+                    "example": 100006
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 20000
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "payload"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transfer 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Transfer 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Transfer 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/topup": {
+      "post": {
+        "description": "TopUp",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "example": 50000
+                  },
+                  "fund_id": {
+                    "type": "number",
+                    "example": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TopUp 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "TopUp 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "TopUp 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Login",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "test8@shopee.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "1234"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Login 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Login 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/register": {
+      "post": {
+        "description": "Register",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "test8"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "Test8@shopee.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "1234"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Register 200 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Register 400 response generic",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "401": {
+            "description": "Register 401 Not Authenticated",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  }
+}

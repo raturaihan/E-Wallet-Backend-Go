@@ -12,6 +12,7 @@ import (
 
 func Router() {
 	r := gin.Default()
+	r.Static("/docs", "./dist")
 	db := database.NewDB()
 	userRepository := repository.NewUserRepository(db)
 	userUsecase := usecase.NewUserUsecase(userRepository)
