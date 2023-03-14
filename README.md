@@ -1,11 +1,11 @@
-# assignment-golang-backend
+# E Wallet-Golang-Backend
 
 
 Created by Ratu Raihan Amany
 
 ## Description
 
-This is an API documentation for E-Wallet Backend created for the purpose of fulfilling the Digitalent Batch 03 assignment.
+This is an API documentation for E-Wallet Backend
 
 
 
@@ -49,9 +49,13 @@ Coverage:
 ![Unit Testing Repository](assets/repository.png) 
 
 
-## Not Complete Yet 
-- API for reset password 
+## Features
+- Login and Register 
 
-- User can get total data transactions
+- Edit profile and get user's details
 
-- Unit Test coverage not 100%
+- Top up amount
+
+- Transfer 
+
+- Get all transaction history with filter and pagination
